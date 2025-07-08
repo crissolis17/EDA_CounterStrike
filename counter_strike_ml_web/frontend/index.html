@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counter Strike ML Predictor</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">🎮 CS:GO ML Predictor</h1>
+            <p class="subtitle">Predicción de Supervivencia usando Machine Learning</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            
+            <!-- Panel de Control -->
+            <section class="control-panel">
+                <h2>⚙️ Configuración del Jugador</h2>
+                <form id="prediction-form" class="prediction-form">
+                    
+                    <!-- Selección de Mapa -->
+                    <div class="form-group">
+                        <label for="map-select">🗺️ Mapa:</label>
+                        <select id="map-select" name="map" required>
+                            <option value="">Selecciona un mapa</option>
+                            <option value="de_dust2">de_dust2</option>
+                            <option value="de_inferno">de_inferno</option>
+                            <option value="de_mirage">de_mirage</option>
+                            <option value="de_nuke">de_nuke</option>
+                        </select>
+                    </div>
+
+                    <!-- Equipamiento -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="equipment-value">💰 Valor del Equipamiento:</label>
+                            <input type="range" id="equipment-value" name="equipment" 
+                                   min="0" max="16000" value="3000" step="100">
+                            <span class="range-value" id="equipment-display">$3,000</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="team-equipment">👥 Equipamiento del Equipo:</label>
+                            <input type="range" id="team-equipment" name="teamEquipment" 
+                                   min="0" max="80000" value="15000" step="500">
+                            <span class="range-value" id="team-equipment-display">$15,000</span>
+                        </div>
+                    </div>
+
+                    
+
+                    <!-- Armas Primarias -->
+                    <div class="form-group">
+                        <label>🔫 Arma Primaria:</label>
+                        <div class="weapon-selection">
+                            <label class="weapon-option">
+                                <input type="radio" name="weapon" value="rifle">
+                                <span class="weapon-label">🔫 Rifle de Asalto</span>
+                            </label>
+                            <label class="weapon-option">
+                                <input type="radio" name="weapon" value="sniper">
+                                <span class="weapon-label">🎯 Rifle de Francotirador</span>
+                            </label>
+                            <label class="weapon-option">
+                                <input type="radio" name="weapon" value="smg">
+                                <span class="weapon-label">⚡ SMG</span>
+                            </label>
+                            <label class="weapon-option">
+                                <input type="radio" name="weapon" value="pistol">
+                                <span class="weapon-label">🔫 Pistola</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Predicción -->
+                    <div class="prediction-buttons">
+                        <button type="button" id="predict-regression" class="btn btn-primary">
+                            📊 Predicción de Tiempo (Random Forest)
+                        </button>
+                        <button type="button" id="predict-classification" class="btn btn-secondary">
+                            🎯 Clasificación de Supervivencia (XGBoost)
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Resultados -->
+            <section class="results-section" id="results-section" style="display: none;">
+                <h2>📈 Resultados de Predicción</h2>
+                
+                <!-- Tarjetas de Resultados -->
+                <div class="results-grid">
+                    <div class="result-card" id="regression-result">
+                        <h3>⏱️ Tiempo de Supervivencia</h3>
+                        <div class="result-value" id="survival-time">--</div>
+                        <div class="result-confidence" id="regression-confidence">--</div>
+                    </div>
+                    
+                    <div class="result-card" id="classification-result">
+                        <h3>🎯 Clasificación</h3>
+                        <div class="result-value" id="survival-class">--</div>
+                        <div class="result-confidence" id="classification-confidence">--</div>
+                    </div>
+                </div>
+
+                <!-- Gráficos -->
+                <div class="charts-container">
+                    <div class="chart-wrapper">
+                        <canvas id="prediction-chart"></canvas>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="feature-importance-chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Información del Modelo -->
+            <section class="model-info">
+                <h2>🤖 Información de los Modelos</h2>
+                <div class="models-grid">
+                    <div class="model-card">
+                        <h3>🌳 Random Forest (Regresión)</h3>
+                        <p><strong>Propósito:</strong> Predice el tiempo exacto de supervivencia en segundos</p>
+                        <p><strong>Precisión:</strong> R² = 0.557</p>
+                        <p><strong>Características principales:</strong> Equipamiento, mapa</p>
+                    </div>
+                    
+                    <div class="model-card">
+                        <h3>🚀 XGBoost (Clasificación)</h3>
+                        <p><strong>Propósito:</strong> Clasifica como alta o baja supervivencia</p>
+                        <p><strong>Precisión:</strong> AUC = 0.85+</p>
+                        <p><strong>Características principales:</strong> Feature engineering avanzado</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 Counter Strike ML Predictor | Proyecto Académico</p>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Procesando predicción...</p>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/predictions.js"></script>
+</body>
+</html>
